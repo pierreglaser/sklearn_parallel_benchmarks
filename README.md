@@ -1,0 +1,3 @@
+Repository containing benchmark sciprts of scikit-learn estimators for
+different parallelization backend settings: type of workers (threads or
+processes), serialization behavior...

@@ -1,0 +1,6 @@
+*__pycache__*
+*.swp
+env/
+html/
+results/
+sklearn_parallel_benchmarks/
