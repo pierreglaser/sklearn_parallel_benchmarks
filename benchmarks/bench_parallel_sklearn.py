@@ -1,27 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Benchmark of commonnly used ML pipelines in scikit-learn
+#
+# Author: Pierre Glaser
+
 import os
-import timeit
 
 import numpy as np
 
-from benchmarks.common import EstimatorWithLargeList
+from benchmarks.common import EstimatorWithLargeList, SklearnBenchmark
 
-
-class SklearnBenchmark:
-    processes = 1
-    number = 1
-    repeat = 1
-    warmup_time = 0
-    timer = timeit.default_timer
-    timeout = 120
-
-    # non-asv class attributes
-    n_tasks = 10
-
-    def setup(self, backend, pickler):
-        # tell scikit-learn where to look for joblib
-        os.environ['SKLEARN_SITE_JOBLIB'] = os.path.join(
-                os.environ['ASV_ENV_DIR'], 'project')
-        os.environ['LOKY_PICKLER'] = pickler
 
 
 class TwentyDataBench(SklearnBenchmark):
