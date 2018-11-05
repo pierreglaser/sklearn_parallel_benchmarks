@@ -25,6 +25,28 @@ import os
 import timeit
 import numpy as np
 from sklearn.utils.testing import all_estimators
+from sklearn.base import clone
+
+
+ALL_REGRESSORS = {k: v for k, v in all_estimators(
+    include_meta_estimators=False, type_filter='regressor')}
+ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
+    include_meta_estimators=False, type_filter='classifier')}
+ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
+    include_meta_estimators=False, type_filter='transformer')}
+
+
+def clone_and_fit(estimator, X, y):
+    """clone and fit an estimator
+
+    This function is performs a fitting process after cloning the estimator
+    given as input. It can be safely called from within a Parallel loop with
+    a shared memory backend, and is common to objects that implement a fit
+    method (in opposition with cross_val_score, that requires scoring and
+    therefore that cannot be used with transformers)
+    """
+    cloned_estimator = clone(estimator)
+    cloned_estimator.fit(X, y)
 
 
 class SklearnBenchmark:
