@@ -24,6 +24,7 @@ call is run between two iterations of loop 2, in opposition with loop 5.
 import os
 import timeit
 import numpy as np
+from sklearn.utils.testing import all_estimators
 
 
 class SklearnBenchmark:

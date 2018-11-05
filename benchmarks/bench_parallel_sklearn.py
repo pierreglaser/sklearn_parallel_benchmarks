@@ -3,7 +3,6 @@
 # Benchmark of commonnly used ML pipelines in scikit-learn
 #
 # Author: Pierre Glaser
-
 import os
 
 import numpy as np
@@ -15,7 +14,7 @@ from benchmarks.common import EstimatorWithLargeList, SklearnBenchmark
 class TwentyDataBench(SklearnBenchmark):
     param_names = ['backend', 'pickler', 'n_jobs']
     params = (['multiprocessing', 'loky', 'threading'][1:],
-              ['', 'cloudpickle'],
+              ['pickle', 'cloudpickle'],
               [1, 2, 4])
 
     def setup(self, backend, pickler, n_jobs):
@@ -46,7 +45,7 @@ class TwentyDataBench(SklearnBenchmark):
 class CaliforniaHousingBench(SklearnBenchmark):
     param_names = ['backend', 'pickler', 'n_jobs']
     params = (['multiprocessing', 'loky', 'threading'][1:],
-              ['', 'cloudpickle'],
+              ['pickle', 'cloudpickle'],
               [1, 2, 4])
 
     def setup(self, backend, pickler, n_jobs):
@@ -77,7 +76,7 @@ class CaliforniaHousingBench(SklearnBenchmark):
 class MakeRegressionDataBench(SklearnBenchmark):
     param_names = ['backend', 'pickler', 'n_jobs', 'n_samples', 'n_features']
     params = (['multiprocessing', 'loky', 'threading'][1:],
-              ['', 'cloudpickle'],
+              ['pickle', 'cloudpickle'],
               [1, 2, 4],
               [10000, 30000],
               [10])
@@ -93,7 +92,7 @@ class MakeRegressionDataBench(SklearnBenchmark):
         from joblib import delayed, parallel_backend, Parallel
 
         with parallel_backend(backend=backend):
-            Parallel(n_jobs=n_jobs)(delayed(lambda x: x)(
+            Parallel(n_jobs=n_jobs)(delayed(id)(
                 list(range(100000))) for _ in range(self.n_tasks))
 
     def time_gridsearch_large_list(self, backend, pickler, n_jobs, n_samples,
@@ -161,7 +160,7 @@ class MakeRegressionDataBench(SklearnBenchmark):
             'backend', 'pickler', 'n_jobs', 'n_samples', 'n_features']
     time_scaler_kernelridge_pipeline.params = (
             ['multiprocessing', 'loky', 'threading'][1:],
-            ['', 'cloudpickle'],
+            ['pickle', 'cloudpickle'],
             [1, 2, 4],
             [10000],
             [10])
