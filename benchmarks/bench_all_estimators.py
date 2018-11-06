@@ -3,11 +3,7 @@
 # Benchmarking all in scikit-learn
 #
 # Author: Pierre Glaser
-import os
-
-import numpy as np
-
-from benchmarks.common import EstimatorWithLargeList, SklearnBenchmark
+from benchmarks.common import SklearnBenchmark
 from benchmarks.common import ALL_REGRESSORS
 from benchmarks.common import clone_and_fit
 
@@ -40,7 +36,7 @@ class RegressionBench(SklearnBenchmark):
             estimator.set_params(n_jobs=n_jobs)
         else:
             print('warning: n_jobs is not an attribute of {}'.format(
-                estimator))
+                  estimator))
 
         from joblib import parallel_backend
         with parallel_backend(backend):
@@ -56,5 +52,5 @@ class RegressionBench(SklearnBenchmark):
             # avoid over subscription
             estimator.set_params(n_jobs=1)
 
-        Parallel(n_jobs=n_jobs)(delayed(clone_and_fit)(
+        Parallel(backend=backend, n_jobs=n_jobs)(delayed(clone_and_fit)(
             estimator, self.X, self.y) for _ in range(self.n_tasks))
