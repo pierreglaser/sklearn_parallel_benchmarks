@@ -7,6 +7,8 @@ from benchmarks.common import SklearnBenchmark
 from benchmarks.common import ALL_REGRESSORS
 from benchmarks.common import clone_and_fit
 
+from benchmarks.config import N_SAMPLES
+
 
 class RegressionBench(SklearnBenchmark):
     param_names = ['estimator_name', 'backend', 'pickler', 'n_jobs',
@@ -15,13 +17,20 @@ class RegressionBench(SklearnBenchmark):
               ['multiprocessing', 'loky', 'threading'][1:],
               ['pickle', 'cloudpickle'],
               [1, 2, 4],
-              [10000, 30000][:1],
-              [10])
+              ['auto'],
+              ['auto'])
 
     def setup(self, estimator_name, backend, pickler, n_jobs, n_samples,
               n_features):
         super(RegressionBench, self).setup(backend, pickler)
         from sklearn.datasets import make_regression
+
+        if n_samples == 'auto':
+            n_samples = N_SAMPLES[estimator_name]
+
+        if n_features == 'auto':
+            n_features = 10
+
         X, y = make_regression(n_samples, n_features)
         self.X = X
         self.y = y
