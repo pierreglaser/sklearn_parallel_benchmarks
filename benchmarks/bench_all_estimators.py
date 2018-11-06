@@ -41,7 +41,7 @@ class RegressionBench(SklearnBenchmark):
         # the values are the estimator classes
         cls = ALL_REGRESSORS[estimator_name]
         estimator = cls()
-        if 'n_jobs' in estimator.get_params().keys():
+        if 'n_jobs' in estimator.get_params():
             estimator.set_params(n_jobs=n_jobs)
         else:
             print('warning: n_jobs is not an attribute of {}'.format(
@@ -57,7 +57,7 @@ class RegressionBench(SklearnBenchmark):
         cls = ALL_REGRESSORS[estimator_name]
         estimator = cls()
         from joblib import Parallel, delayed
-        if 'n_jobs' in estimator.get_params().keys():
+        if 'n_jobs' in estimator.get_params():
             # avoid over subscription
             estimator.set_params(n_jobs=1)
 
