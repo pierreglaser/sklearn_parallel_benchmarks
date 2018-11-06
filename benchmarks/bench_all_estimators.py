@@ -11,18 +11,17 @@ from benchmarks.config import N_SAMPLES
 
 
 class RegressionBench(SklearnBenchmark):
-    param_names = ['estimator_name', 'backend', 'pickler', 'n_jobs',
-                   'n_samples', 'n_features']
+    param_names = ['estimator_name', 'backend', 'n_jobs', 'n_samples',
+                   'n_features']
     params = (sorted(list(ALL_REGRESSORS.keys()))[:5],
               ['multiprocessing', 'loky', 'threading'][1:],
-              ['pickle', 'cloudpickle'],
               [1, 2, 4],
               ['auto'],
               ['auto'])
 
-    def setup(self, estimator_name, backend, pickler, n_jobs, n_samples,
-              n_features):
-        super(RegressionBench, self).setup(backend, pickler)
+    def setup(self, estimator_name, backend, n_jobs, n_samples, n_features):
+        # using LOKY_PICKLER="" tells loky to use the default pickler
+        super(RegressionBench, self).setup(backend, "")
         from sklearn.datasets import make_regression
 
         if n_samples == 'auto':
@@ -35,8 +34,8 @@ class RegressionBench(SklearnBenchmark):
         self.X = X
         self.y = y
 
-    def time_single_fit_parallelization(self, estimator_name, backend, pickler,
-                                        n_jobs, n_samples, n_features):
+    def time_single_fit_parallelization(self, estimator_name, backend, n_jobs,
+                                        n_samples, n_features):
         # ALL_REGRESSORS is a dict. The keys are the estimator class names, and
         # the values are the estimator classes
         cls = ALL_REGRESSORS[estimator_name]
@@ -52,8 +51,7 @@ class RegressionBench(SklearnBenchmark):
             estimator.fit(self.X, self.y)
 
     def time_multiple_fit_parallelization(self, estimator_name, backend,
-                                          pickler, n_jobs, n_samples,
-                                          n_features):
+                                          n_jobs, n_samples, n_features):
         cls = ALL_REGRESSORS[estimator_name]
         estimator = cls()
         from joblib import Parallel, delayed
