@@ -77,6 +77,7 @@ def create_benchmark_dataframe(group_by='name'):
             # however empirically it seems to be the case
             mi = pd.MultiIndex.from_product(unquoted_params, names=param_names)
             _results = pd.Series(single_env_result._results[b_name], index=mi)
+            _results.dropna(inplace=True)
 
             results[values_to_group_by][values_to_concat_on] = _results
 
