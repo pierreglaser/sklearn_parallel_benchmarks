@@ -21,7 +21,6 @@ number and repeat attributes differ in the sense that a setup and teardown
 call is run between two iterations of loop 2, in opposition with loop 5.
 
 """
-import os
 import timeit
 from functools import wraps
 from joblib import Memory

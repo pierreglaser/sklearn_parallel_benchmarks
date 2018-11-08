@@ -3,10 +3,14 @@
 # Benchmarking all in scikit-learn
 #
 # Author: Pierre Glaser
-from benchmarks.common import SklearnBenchmark
-from benchmarks.common import ALL_REGRESSORS
-from benchmarks.common import clone_and_fit
 
+import os
+
+import numpy
+from joblib import Parallel, delayed, parallel_backend
+
+from benchmarks.common import ALL_REGRESSORS, SklearnBenchmark, clone_and_fit
+from benchmarks.common import make_regression_cached
 from benchmarks.config import N_SAMPLES, benchmarks_results
 
 
@@ -41,8 +45,6 @@ class RegressionBench(SklearnBenchmark):
             pass
 
         super(RegressionBench, self).setup(pickler)
-        from benchmarks.common import make_regression_cached
-
         if n_samples == 'auto':
             n_samples = N_SAMPLES[estimator_name]
 
@@ -72,7 +74,6 @@ class RegressionBench(SklearnBenchmark):
             print('warning: n_jobs is not an attribute of {}'.format(
                   estimator_name))
 
-        from joblib import parallel_backend
         with parallel_backend(backend):
             estimator.fit(self.X, self.y)
 
@@ -81,7 +82,6 @@ class RegressionBench(SklearnBenchmark):
                                           n_features):
         cls = ALL_REGRESSORS[estimator_name]
         estimator = cls()
-        from joblib import Parallel, delayed
         if 'n_jobs' in estimator.get_params():
             # avoid over subscription
             estimator.set_params(n_jobs=1)
