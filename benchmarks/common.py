@@ -23,17 +23,26 @@ call is run between two iterations of loop 2, in opposition with loop 5.
 """
 import os
 import timeit
-import numpy as np
+from functools import wraps
+from joblib import Memory
 from sklearn.utils.testing import all_estimators
+from sklearn.datasets import make_regression
 from sklearn.base import clone
 
 
+memory = Memory('/tmp/pglaser/joblib')
 ALL_REGRESSORS = {k: v for k, v in all_estimators(
     include_meta_estimators=False, type_filter='regressor')}
 ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
     include_meta_estimators=False, type_filter='classifier')}
 ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
     include_meta_estimators=False, type_filter='transformer')}
+
+
+@wraps(make_regression)
+@memory.cache
+def make_regression_cached(*args, **kwargs):
+    return make_regression(*args, **kwargs)
 
 
 def clone_and_fit(estimator, X, y):

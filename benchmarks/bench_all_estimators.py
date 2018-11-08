@@ -38,7 +38,7 @@ class RegressionBench(SklearnBenchmark):
             raise NotImplementedError
 
         super(RegressionBench, self).setup(backend, pickler)
-        from sklearn.datasets import make_regression
+        from benchmarks.config import make_regression_cached
 
         if n_samples == 'auto':
             n_samples = N_SAMPLES[estimator_name]
@@ -48,11 +48,11 @@ class RegressionBench(SklearnBenchmark):
 
         # For multitask estimators, generate multi-dimensional output
         if 'MultiTask' in estimator_name:
-            X, y = make_regression(n_samples, n_features, n_targets=4)
+            X, y = make_regression_cached(n_samples, n_features, n_targets=4)
         else:
-            X, y = make_regression(n_samples, n_features, n_targets=1)
+            X, y = make_regression_cached(n_samples, n_features, n_targets=1)
 
-        X, y = make_regression(n_samples, n_features)
+        X, y = make_regression_cached(n_samples, n_features)
         self.X = X
         assert self.X.shape[0] == N_SAMPLES[estimator_name]
         self.y = y
