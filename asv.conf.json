@@ -83,6 +83,7 @@
          "pip+cloudpickle": [],
          "cython": [],
          "scipy": [],
+         "pandas": []
     },
 
     // Combinations of libraries/python versions can be excluded/included
