@@ -3,12 +3,7 @@
 # Benchmark of commonnly used ML pipelines in scikit-learn
 #
 # Author: Pierre Glaser
-import os
-
-import numpy as np
-
 from benchmarks.common import EstimatorWithLargeList, SklearnBenchmark
-
 
 
 class TwentyDataBench(SklearnBenchmark):
@@ -98,12 +93,11 @@ class MakeRegressionDataBench(SklearnBenchmark):
     def time_gridsearch_large_list(self, backend, pickler, n_jobs, n_samples,
                                    n_features):
 
-        from joblib import Parallel, parallel_backend
+        from joblib import parallel_backend
 
         # importing parallel_backend from externals will fail
         # from sklearn.externals.joblib import Parallel, parallel_backend
 
-        from sklearn.linear_model import Ridge
         from sklearn.model_selection import GridSearchCV
 
         # serializing object with big lists slow down cloudpickle-based
@@ -132,7 +126,6 @@ class MakeRegressionDataBench(SklearnBenchmark):
     def time_randomforest(self, backend, pickler, n_jobs, n_samples,
                           n_features):
         from sklearn.ensemble.forest import RandomForestRegressor
-        from sklearn.model_selection import GridSearchCV
         from joblib import parallel_backend
 
         with parallel_backend(backend):
