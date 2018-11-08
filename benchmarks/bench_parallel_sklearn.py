@@ -18,7 +18,7 @@ class TwentyDataBench(SklearnBenchmark):
               [1, 2, 4])
 
     def setup(self, backend, pickler, n_jobs):
-        super(TwentyDataBench, self).setup(backend, pickler)
+        super(TwentyDataBench, self).setup(pickler)
 
         from sklearn.datasets import fetch_20newsgroups
         data = fetch_20newsgroups()
@@ -49,7 +49,7 @@ class CaliforniaHousingBench(SklearnBenchmark):
               [1, 2, 4])
 
     def setup(self, backend, pickler, n_jobs):
-        super(CaliforniaHousingBench, self).setup(backend, pickler)
+        super(CaliforniaHousingBench, self).setup(pickler)
 
         from sklearn.datasets import fetch_california_housing
         self.california_data = fetch_california_housing()
@@ -82,7 +82,7 @@ class MakeRegressionDataBench(SklearnBenchmark):
               [10])
 
     def setup(self, backend, pickler, n_jobs, n_samples, n_features):
-        super(MakeRegressionDataBench, self).setup(backend, pickler)
+        super(MakeRegressionDataBench, self).setup(pickler)
         from sklearn.datasets import make_regression
         X, y = make_regression(n_samples, n_features)
         self.X = X

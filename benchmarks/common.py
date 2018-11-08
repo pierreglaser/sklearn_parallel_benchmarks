@@ -69,9 +69,10 @@ class SklearnBenchmark:
     # non-asv class attributes
     n_tasks = 10
 
-    def setup(self, backend, pickler):
+    def setup(self, pickler):
         from joblib.externals.loky import set_loky_pickler
         set_loky_pickler(pickler)
+
 
 class EstimatorWithLargeList:
     """simple estimator, with a large list as an attribute

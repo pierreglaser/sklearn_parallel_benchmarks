@@ -40,7 +40,7 @@ class RegressionBench(SklearnBenchmark):
         except KeyError:
             pass
 
-        super(RegressionBench, self).setup(backend, pickler)
+        super(RegressionBench, self).setup(pickler)
         from benchmarks.common import make_regression_cached
 
         if n_samples == 'auto':
