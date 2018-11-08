@@ -25,9 +25,15 @@ def _remove_quotes(params):
 
 
 def create_benchmark_dataframe(group_by='name'):
-    repo_dirname = os.path.dirname(__file__)
+    # if we are in an asv subprocess, use ASV_CONF_DIR to load the config
+    repo_dirname = os.environ.get("ASV_CONF_DIR", os.path.dirname(__file__))
     config_path = os.path.join(repo_dirname, 'asv.conf.json')
     config = Config.load(config_path)
+
+    # results_dir is a relative path to the benchmarks repository. If the
+    # directory where the code is run is not the benchmark repository, then
+    # loading the results will fail.
+    config.results_dir = os.path.join(repo_dirname, 'results')
 
     benchmarks = Benchmarks.load(config)
 
