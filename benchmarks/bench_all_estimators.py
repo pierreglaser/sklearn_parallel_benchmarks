@@ -29,16 +29,19 @@ class RegressionBench(SklearnBenchmark):
         # considered valid for now, and we dont need to run them again, hence
         # we raise NotImplementedError, which causes the benchmark to be
         # skipped
-        benchmark_times = benchmarks_results.xs(
-                ['time_multiple_fit_parallelization', estimator_name, backend,
-                    pickler, str(n_jobs), n_samples, n_features],
-                level=['name', *self.param_names])
-        avg_benchmark_time = benchmark_times.mean()
-        if avg_benchmark_time > 5:
-            raise NotImplementedError
+        try:
+            benchmark_times = benchmarks_results.xs(
+                    ['time_multiple_fit_parallelization', estimator_name,
+                     backend, pickler, str(n_jobs), n_samples, n_features],
+                    level=['name', *self.param_names])
+            avg_benchmark_time = benchmark_times.mean()
+            if avg_benchmark_time > 5:
+                raise NotImplementedError
+        except KeyError:
+            pass
 
         super(RegressionBench, self).setup(backend, pickler)
-        from benchmarks.config import make_regression_cached
+        from benchmarks.common import make_regression_cached
 
         if n_samples == 'auto':
             n_samples = N_SAMPLES[estimator_name]
@@ -67,7 +70,7 @@ class RegressionBench(SklearnBenchmark):
             estimator.set_params(n_jobs=n_jobs)
         else:
             print('warning: n_jobs is not an attribute of {}'.format(
-                  estimator))
+                  estimator_name))
 
         from joblib import parallel_backend
         with parallel_backend(backend):
