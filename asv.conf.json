@@ -84,7 +84,7 @@
          "cython": [],
          "scipy": [],
          "pandas": [],
-         "asv": []
+         "pip+asv": []
     },
 
     // Combinations of libraries/python versions can be excluded/included
