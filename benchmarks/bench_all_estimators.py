@@ -7,7 +7,7 @@ from benchmarks.common import SklearnBenchmark
 from benchmarks.common import ALL_REGRESSORS
 from benchmarks.common import clone_and_fit
 
-from benchmarks.config import N_SAMPLES
+from benchmarks.config import N_SAMPLES, benchmarks_results
 
 
 class RegressionBench(SklearnBenchmark):
@@ -22,6 +22,19 @@ class RegressionBench(SklearnBenchmark):
 
     def setup(self, estimator_name, backend, pickler, n_jobs, n_samples,
               n_features):
+        # we are currently trying to spot benchmarks that run too fast, because
+        # then the actual fitting time is hidden in the workers
+        # creation/communication overhead.
+        # all benchmarks whose running time exceed a certain threshold are
+        # considered valid for now, and we dont need to run them again, hence
+        # we raise NotImplementedError, which causes the benchmark to be
+        # skipped
+        benchmark_time = benchmarks_results.xs(
+                ['time_multiple_fit_parallelization', estimator_name, backend,
+                    pickler, n_jobs, n_samples],
+                levels=['name', *self.param_names])
+        print('benchmark time: {}'.format(benchmark_time))
+        raise NotImplementedError
         super(RegressionBench, self).setup(backend, pickler)
         from sklearn.datasets import make_regression
 
