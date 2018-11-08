@@ -29,12 +29,14 @@ class RegressionBench(SklearnBenchmark):
         # considered valid for now, and we dont need to run them again, hence
         # we raise NotImplementedError, which causes the benchmark to be
         # skipped
-        benchmark_time = benchmarks_results.xs(
+        benchmark_times = benchmarks_results.xs(
                 ['time_multiple_fit_parallelization', estimator_name, backend,
-                    pickler, n_jobs, n_samples],
-                levels=['name', *self.param_names])
-        print('benchmark time: {}'.format(benchmark_time))
-        raise NotImplementedError
+                    pickler, str(n_jobs), n_samples, n_features],
+                level=['name', *self.param_names])
+        avg_benchmark_time = benchmark_times.mean()
+        if avg_benchmark_time > 5:
+            raise NotImplementedError
+
         super(RegressionBench, self).setup(backend, pickler)
         from sklearn.datasets import make_regression
 
