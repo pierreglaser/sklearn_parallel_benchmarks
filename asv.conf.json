@@ -26,6 +26,7 @@
        "uninstall_command": [],
        "build_command": [
         "python -mpip install -e {build_dir}",
+        "/bin/sh {build_dir}/joblib/externals/vendor_loky.sh git+https://github.com/tomMoral/loky"
        ],
 
     // List of branches to benchmark. If not provided, defaults to "master"
