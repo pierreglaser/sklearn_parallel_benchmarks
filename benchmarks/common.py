@@ -70,11 +70,7 @@ class SklearnBenchmark:
     n_tasks = 10
 
     def setup(self, backend, pickler):
-        # tell scikit-learn where to look for joblib
-        os.environ['SKLEARN_SITE_JOBLIB'] = os.path.join(
-                os.environ['ASV_ENV_DIR'], 'project')
-        os.environ['LOKY_PICKLER'] = pickler
-
+        pass
 
 class EstimatorWithLargeList:
     """simple estimator, with a large list as an attribute
