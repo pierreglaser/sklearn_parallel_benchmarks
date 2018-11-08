@@ -31,8 +31,15 @@ class RegressionBench(SklearnBenchmark):
         if n_features == 'auto':
             n_features = 10
 
+        # For multitask estimators, generate multi-dimensional output
+        if 'MultiTask' in estimator_name:
+            X, y = make_regression(n_samples, n_features, n_targets=4)
+        else:
+            X, y = make_regression(n_samples, n_features, n_targets=1)
+
         X, y = make_regression(n_samples, n_features)
         self.X = X
+        assert self.X.shape[0] == N_SAMPLES[estimator_name]
         self.y = y
 
     def time_single_fit_parallelization(self, estimator_name, backend, pickler,

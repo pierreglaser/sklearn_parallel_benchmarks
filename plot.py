@@ -166,8 +166,9 @@ if __name__ == "__main__":
             fig_label='estimator_name'),
     }
 
-    all_dfs['MakeRegressionDataBench'] = all_dfs['MakeRegressionDataBench'].xs(
-        '10000', axis=0, level='n_samples', drop_level=False)
+    # all_dfs['MakeRegressionDataBench'] =
+    # all_dfs['MakeRegressionDataBench'].xs( '10000', axis=0,
+    # level='n_samples', drop_level=False)
 
     # subset only few combinations of pickler+backend
     all_dfs['RegressionBench'] = pd.concat(
