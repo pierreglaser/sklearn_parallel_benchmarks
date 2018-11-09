@@ -57,7 +57,6 @@ class RegressionBench(SklearnBenchmark):
         else:
             X, y = make_regression_cached(n_samples, n_features, n_targets=1)
 
-        X, y = make_regression_cached(n_samples, n_features)
         self.X = X
         assert self.X.shape[0] == N_SAMPLES[estimator_name]
         self.y = y
