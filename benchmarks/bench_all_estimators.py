@@ -58,7 +58,6 @@ class RegressionBench(SklearnBenchmark):
             X, y = make_regression_cached(n_samples, n_features, n_targets=1)
 
         self.X = X
-        assert self.X.shape[0] == N_SAMPLES[estimator_name]
         self.y = y
 
     def time_single_fit_parallelization(self, estimator_name, backend, pickler,
