@@ -2,6 +2,7 @@ from collections import defaultdict
 import os
 import socket
 
+from joblib import Memory
 import numpy as np
 import pandas as pd
 
@@ -11,6 +12,7 @@ from asv.commands.publish import Publish
 
 HOME = os.environ.get('HOME')
 hostname = socket.gethostname()
+memory = Memory('tmp/pglaser/benchmark_results')
 
 
 def _remove_quotes(params):
@@ -24,6 +26,7 @@ def _remove_quotes(params):
     return unquoted_params_values
 
 
+@memory.cache
 def create_benchmark_dataframe(group_by='name'):
     # if we are in an asv subprocess, use ASV_CONF_DIR to load the config
     repo_dirname = os.environ.get("ASV_CONF_DIR", os.path.dirname(__file__))
