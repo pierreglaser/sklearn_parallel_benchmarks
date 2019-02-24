@@ -29,7 +29,7 @@ from sklearn.datasets import make_regression
 from sklearn.base import clone
 
 
-memory = Memory('/tmp/pglaser/joblib')
+# memory = Memory('/tmp/pglaser/joblib')
 ALL_REGRESSORS = {k: v for k, v in all_estimators(
     include_meta_estimators=False, type_filter='regressor')}
 ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
@@ -39,7 +39,7 @@ ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
 
 
 @wraps(make_regression)
-@memory.cache
+# @memory.cache
 def make_regression_cached(*args, **kwargs):
     return make_regression(*args, **kwargs)
 
@@ -63,7 +63,7 @@ class SklearnBenchmark:
     repeat = 1
     warmup_time = 0
     timer = timeit.default_timer
-    timeout = 120
+    timeout = 100
 
     # non-asv class attributes
     n_tasks = 10

@@ -17,10 +17,10 @@ from benchmarks.config import N_SAMPLES, benchmarks_results
 class RegressionBench(SklearnBenchmark):
     param_names = ['estimator_name', 'backend', 'pickler', 'n_jobs',
                    'n_samples', 'n_features']
-    params = (sorted(list(ALL_REGRESSORS.keys()))[:5],
+    params = (sorted(list(ALL_REGRESSORS.keys()))
               ['multiprocessing', 'loky', 'threading'][1:],
-              ['pickle', 'cloudpickle'],
-              [1, 2, 4],
+              ['pickle', 'cloudpickle'][:1],
+              [1, 2, 4][:2],
               ['auto'],
               ['auto'])
 
@@ -41,7 +41,7 @@ class RegressionBench(SklearnBenchmark):
             avg_benchmark_time = benchmark_times.mean()
             if avg_benchmark_time > 5:
                 raise NotImplementedError
-        except KeyError:
+        except (KeyError, AttributeError):
             pass
 
         super(RegressionBench, self).setup(pickler)

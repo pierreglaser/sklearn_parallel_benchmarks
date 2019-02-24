@@ -26,7 +26,7 @@
        "uninstall_command": [],
        "build_command": [
         "python -mpip install -e {build_dir}",
-        "/bin/sh {build_dir}/joblib/externals/vendor_loky.sh git+https://github.com/tomMoral/loky"
+        // "/bin/sh {build_dir}/joblib/externals/vendor_loky.sh git+https://github.com/tomMoral/loky"
        ],
 
     // List of branches to benchmark. If not provided, defaults to "master"
@@ -45,7 +45,7 @@
     // If missing or the empty string, the tool will be automatically
     // determined by looking for tools on the PATH environment
     // variable.
-    "environment_type": "conda",
+    "environment_type": "virtualenv",
 
     // timeout in seconds for installing any dependencies in environment
     // defaults to 10 min
@@ -57,9 +57,9 @@
     // The Pythons you'd like to test against.  If not provided, defaults
     // to the current version of Python used to run `asv`.
     "pythons": [
-    //     "3.6",
+           "3.6",
     //     "3.7",
-           "3.5",
+    //     "3.5",
     ],
 
 
@@ -78,12 +78,10 @@
     // followed by the pip installed packages).
     //
     "matrix": {
-         "pytest": [],
          "numpy": [],
-         "pip+git+https://github.com/scikit-learn/scikit-learn.git": [],
+         "scikit-learn": [],
          "pip+cloudpickle": [],
-         "cython": [],
-         "scipy": [],
+         "pytest": [],
          "pandas": [],
          "pip+asv": []
     },
