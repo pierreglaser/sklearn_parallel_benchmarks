@@ -28,6 +28,7 @@ from sklearn.utils.testing import all_estimators
 from sklearn.datasets import make_regression
 from sklearn.base import clone
 
+from benchmarks.profile_this import profile_this
 
 # memory = Memory('/tmp/pglaser/joblib')
 ALL_REGRESSORS = {k: v for k, v in all_estimators(
@@ -37,6 +38,35 @@ ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
 ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
     include_meta_estimators=False, type_filter='transformer')}
 
+ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM = {}
+ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM = {}
+ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM = {}
+for name, cls in ALL_REGRESSORS.items():
+    try:
+        _estimator = cls()
+    except Exception as e:
+        print('{}: {}'.format(name, e))
+    else:
+        if hasattr(_estimator, "n_jobs"):
+            ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM[name] = cls
+
+for name, cls in ALL_TRANSFORMERS.items():
+    try:
+        _estimator = cls()
+    except Exception as e:
+        print('{}: {}'.format(name, e))
+    else:
+        if hasattr(_estimator, "n_jobs"):
+            ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM[name] = cls
+
+for name, cls in ALL_CLASSIFIERS.items():
+    try:
+        _estimator = cls()
+    except Exception as e:
+        print('{}: {}'.format(name, e))
+    else:
+        if hasattr(_estimator, "n_jobs"):
+            ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[name] = cls
 
 @wraps(make_regression)
 # @memory.cache
@@ -53,8 +83,28 @@ def clone_and_fit(estimator, X, y):
     method (in opposition with cross_val_score, that requires scoring and
     therefore that cannot be used with transformers)
     """
+    clone_and_fit_profiled(estimator, X, y)
+
+
+@profile_this
+def fit_estimator(estimator, X, y):
+    """Fit an estimator.
+
+    This function exists because we cannot profile directly methods of
+    scikit-learn, as we need to decorate them in the source code
+    """
+    estimator.fit(X, y)
+
+
+@profile_this
+def clone_and_fit_profiled(estimator, X, y):
+    # if we want to keep using pickle and not cloudpickle in those benchmarks,
+    # we need to send pickleable fuctions. Directly decorating clone_and_fit
+    # make it a nested function, thus not pickleable. Therefore, we make
+    # clone_and_fit call a decorated function.
     cloned_estimator = clone(estimator)
     cloned_estimator.fit(X, y)
+
 
 
 class SklearnBenchmark:
