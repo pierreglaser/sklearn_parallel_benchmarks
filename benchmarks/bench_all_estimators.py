@@ -70,8 +70,10 @@ class RegressionBench(SklearnBenchmark):
         if 'n_jobs' in estimator.get_params():
             estimator.set_params(n_jobs=n_jobs)
         else:
-            print('warning: n_jobs is not an attribute of {}'.format(
+            print('n_jobs is not an attribute of {}, not running the '
+                  ' benchmark'.format(
                   estimator_name))
+            return NotImplemented
 
         with parallel_backend(backend):
             fit_estimator(estimator, self.X, self.y)
