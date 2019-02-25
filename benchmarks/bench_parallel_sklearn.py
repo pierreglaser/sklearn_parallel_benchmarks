@@ -3,7 +3,7 @@
 # Benchmark of commonnly used ML pipelines in scikit-learn
 #
 # Author: Pierre Glaser
-from joblib import parallel_backend, Parallel, delayed
+from sklearn.externals.joblib import parallel_backend, Parallel, delayed
 from sklearn.datasets import fetch_20newsgroups, fetch_california_housing
 from sklearn.datasets import make_regression
 from sklearn.ensemble.forest import RandomForestRegressor

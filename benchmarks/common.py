@@ -119,7 +119,7 @@ class SklearnBenchmark:
     n_tasks = 10
 
     def setup(self, pickler):
-        from joblib.externals.loky import set_loky_pickler
+        from sklearn.externals.joblib.externals.loky import set_loky_pickler
         set_loky_pickler(pickler)
 
 
