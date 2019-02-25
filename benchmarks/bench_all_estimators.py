@@ -60,8 +60,7 @@ class RegressionBench(SklearnBenchmark):
 
         if backend == 'loky':
             # warm up the executor to hide the process-creation overhead
-            Parallel(n_jobs=n_jobs)(delayed(id(i) for i in range(n_jobs))
-
+            Parallel(n_jobs=n_jobs)(delayed(id)(i) for i in range(n_jobs))
         self.X = X
         self.y = y
 
