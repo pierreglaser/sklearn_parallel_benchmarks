@@ -26,7 +26,7 @@ def _remove_quotes(params):
     return unquoted_params_values
 
 
-@memory.cache
+# @memory.cache
 def create_benchmark_dataframe(group_by='name'):
     # if we are in an asv subprocess, use ASV_CONF_DIR to load the config
     repo_dirname = os.environ.get("ASV_CONF_DIR", os.path.dirname(__file__))
