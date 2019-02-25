@@ -7,7 +7,7 @@
 import os
 
 import numpy
-from joblib import Parallel, delayed, parallel_backend
+from sklearn.externals.joblib import Parallel, delayed, parallel_backend
 
 from benchmarks.common import ALL_REGRESSORS, SklearnBenchmark, clone_and_fit
 from benchmarks.common import fit_estimator
@@ -18,7 +18,7 @@ from benchmarks.config import N_SAMPLES, benchmarks_results
 class RegressionBench(SklearnBenchmark):
     param_names = ['estimator_name', 'backend', 'pickler', 'n_jobs',
                    'n_samples', 'n_features']
-    params = (sorted(list(ALL_REGRESSORS.keys())),
+    params = (sorted(list(ALL_REGRESSORS.keys()))[15:17],
               ['multiprocessing', 'loky', 'threading'][1:],
               ['pickle', 'cloudpickle'][:1],
               [1, 2, 4][:2],
@@ -57,6 +57,10 @@ class RegressionBench(SklearnBenchmark):
             X, y = make_regression_cached(n_samples, n_features, n_targets=4)
         else:
             X, y = make_regression_cached(n_samples, n_features, n_targets=1)
+
+        if backend == 'loky':
+            # warm up the executor to hide the process-creation overhead
+            Parallel(n_jobs=n_jobs)(delayed(id(i) for i in range(n_jobs))
 
         self.X = X
         self.y = y
