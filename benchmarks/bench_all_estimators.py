@@ -7,7 +7,7 @@
 import os
 
 import numpy
-from sklearn.externals.joblib import Parallel, delayed, parallel_backend
+from joblib import Parallel, delayed, parallel_backend
 
 from benchmarks.common import ALL_REGRESSORS, SklearnBenchmark, clone_and_fit
 from benchmarks.common import fit_estimator
@@ -20,7 +20,7 @@ class RegressionBench(SklearnBenchmark):
                    'n_samples', 'n_features']
     params = (sorted(list(ALL_REGRESSORS.keys()))[15:17],
               ['multiprocessing', 'loky', 'threading'][1:],
-              ['pickle', 'cloudpickle'][:1],
+              ['pickle', 'cloudpickle'],
               [1, 2, 4][:2],
               ['auto'],
               ['auto'])
