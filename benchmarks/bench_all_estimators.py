@@ -58,9 +58,9 @@ class RegressionBench(SklearnBenchmark):
         else:
             X, y = make_regression_cached(n_samples, n_features, n_targets=1)
 
-        if backend == 'loky':
-            # warm up the executor to hide the process-creation overhead
-            Parallel(n_jobs=n_jobs)(delayed(id)(i) for i in range(n_jobs))
+        # warm up the executor to hide the process-creation overhead
+        with parallel_backend(backend, n_jobs):
+            Parallel()(delayed(id)(i) for i in range(n_jobs))
         self.X = X
         self.y = y
 
@@ -78,7 +78,7 @@ class RegressionBench(SklearnBenchmark):
                   estimator_name))
             return NotImplemented
 
-        with parallel_backend(backend):
+        with parallel_backend(backend, n_jobs):
             fit_estimator(estimator, self.X, self.y)
 
     def time_multiple_fit_parallelization(self, estimator_name, backend,
