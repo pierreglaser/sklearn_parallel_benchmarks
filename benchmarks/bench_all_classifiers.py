@@ -74,9 +74,6 @@ class AbstractClassificationBench(ABC, SklearnBenchmark):
                   ' benchmark'.format(estimator_name))
             return NotImplemented
 
-        if 'cv' in estimator.get_params():
-            estimator.set_params(cv=5)
-
         if self.estimator_name in PARAMS:
             estimator.set_params(**PARAMS[self.estimator_name])
 
@@ -91,9 +88,6 @@ class AbstractClassificationBench(ABC, SklearnBenchmark):
         if "n_jobs" in estimator.get_params():
             # avoid over subscription
             estimator.set_params(n_jobs=1)
-
-        if "cv" in estimator.get_params():
-            estimator.set_params(cv=5)
 
         if self.estimator_name in PARAMS:
             estimator.set_params(**PARAMS[self.estimator_name])

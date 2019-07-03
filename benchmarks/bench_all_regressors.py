@@ -68,9 +68,6 @@ class AbstractRegressionBench(ABC, SklearnBenchmark):
         if self.estimator_name in PARAMS:
             estimator.set_params(**PARAMS[self.estimator_name])
 
-        if "cv" in estimator.get_params():
-            estimator.set_params(cv=5)
-
         with parallel_backend(backend, n_jobs):
             fit_estimator(estimator, self.X, self.y)
 
