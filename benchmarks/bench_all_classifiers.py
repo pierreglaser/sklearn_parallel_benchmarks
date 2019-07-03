@@ -9,15 +9,14 @@ from sklearn.datasets import make_classification
 
 from benchmarks.common import ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM
 from benchmarks.common import fit_estimator, SklearnBenchmark
-from benchmarks.config import N_SAMPLES
-from abc import ABCMeta, abstractproperty
+from benchmarks.config import N_SAMPLES, PARAMS
+from abc import ABC, ABCMeta, abstractproperty
 
 
-class AbstractClassificationBench(SklearnBenchmark):
+class AbstractClassificationBench(ABC, SklearnBenchmark):
     __metaclass__ = ABCMeta
     param_names = ['backend', 'pickler', 'n_jobs',
                    'n_samples', 'n_features']
-    n = 9
     params = (['multiprocessing', 'loky', 'threading'][1:],
               ['pickle', 'cloudpickle'][:1],
               [1, 2, 4][:2],
@@ -27,6 +26,10 @@ class AbstractClassificationBench(SklearnBenchmark):
     @abstractproperty
     def estimator_cls(self):
         raise NotImplementedError
+
+    @property
+    def estimator_name(self):
+        return self.estimator_cls.__name__
 
     def setup(self, backend, pickler, n_jobs, n_samples,
               n_features):
@@ -71,17 +74,33 @@ class AbstractClassificationBench(SklearnBenchmark):
                   ' benchmark'.format(estimator_name))
             return NotImplemented
 
-        if 'cv' in estimator.get_params():
-            estimator.set_params(cv=5)
+        if self.estimator_name in PARAMS:
+            estimator.set_params(**PARAMS[self.estimator_name])
 
         with parallel_backend(backend, n_jobs):
             fit_estimator(estimator, self.X, self.y)
+
+    def time_multiple_fit_parallelization(
+        self, backend, pickler, n_jobs, n_samples, n_features
+    ):
+        cls = ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[self.estimator_name]
+        estimator = cls()
+        if "n_jobs" in estimator.get_params():
+            # avoid over subscription
+            estimator.set_params(n_jobs=1)
+
+        if self.estimator_name in PARAMS:
+            estimator.set_params(**PARAMS[self.estimator_name])
+
+        Parallel(backend=backend, n_jobs=n_jobs)(
+            delayed(clone_and_fit)(estimator, self.X, self.y)
+            for _ in range(self.n_tasks)
+        )
 
 
 ALL_BENCHMARKS = {}
 for est_name, est_cls in ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM.items():
     bench_name = "{}Bench".format(est_name)
-    print(bench_name)
     bench_class = type(
         bench_name, (AbstractClassificationBench,), {"estimator_cls": est_cls})
     ALL_BENCHMARKS[est_name] = bench_class
