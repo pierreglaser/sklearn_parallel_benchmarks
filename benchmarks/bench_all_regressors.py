@@ -55,7 +55,7 @@ class AbstractRegressionBench(ABC, SklearnBenchmark):
         self, backend, pickler, n_jobs, n_samples, n_features
     ):
         cls = ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM[self.estimator_name]
-        estimator = cls()
+        estimator = cls(**PARAMS.get(self.estimator_name, {}))
         if "n_jobs" in estimator.get_params():
             estimator.set_params(n_jobs=n_jobs)
         else:
@@ -75,7 +75,7 @@ class AbstractRegressionBench(ABC, SklearnBenchmark):
         self, backend, pickler, n_jobs, n_samples, n_features
     ):
         cls = ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM[self.estimator_name]
-        estimator = cls()
+        estimator = cls(**PARAMS.get(self.estimator_name, {}))
         if "n_jobs" in estimator.get_params():
             # avoid over subscription
             estimator.set_params(n_jobs=1)

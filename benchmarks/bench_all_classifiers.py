@@ -62,10 +62,7 @@ class AbstractClassificationBench(ABC, SklearnBenchmark):
         # the values are the estimator classes
         estimator_name = self.estimator_cls.__name__
         cls = ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[estimator_name]
-        estimator = cls()
-
-        if estimator_name in ['LogisticRegression', 'LogisticRegressionCV']:
-            estimator.set_params(solver='saga')
+        estimator = cls(**PARAMS.get(self.estimator_name, {}))
 
         if 'n_jobs' in estimator.get_params():
             estimator.set_params(n_jobs=n_jobs)
@@ -74,9 +71,6 @@ class AbstractClassificationBench(ABC, SklearnBenchmark):
                   ' benchmark'.format(estimator_name))
             return NotImplemented
 
-        if self.estimator_name in PARAMS:
-            estimator.set_params(**PARAMS[self.estimator_name])
-
         with parallel_backend(backend, n_jobs):
             fit_estimator(estimator, self.X, self.y)
 
@@ -84,13 +78,10 @@ class AbstractClassificationBench(ABC, SklearnBenchmark):
         self, backend, pickler, n_jobs, n_samples, n_features
     ):
         cls = ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[self.estimator_name]
-        estimator = cls()
+        estimator = cls(**PARAMS.get(self.estimator_name, {}))
         if "n_jobs" in estimator.get_params():
             # avoid over subscription
             estimator.set_params(n_jobs=1)
-
-        if self.estimator_name in PARAMS:
-            estimator.set_params(**PARAMS[self.estimator_name])
 
         Parallel(backend=backend, n_jobs=n_jobs)(
             delayed(clone_and_fit)(estimator, self.X, self.y)
