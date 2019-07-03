@@ -32,11 +32,11 @@ from benchmarks.profile_this import profile_this
 
 # memory = Memory('/tmp/pglaser/joblib')
 ALL_REGRESSORS = {k: v for k, v in all_estimators(
-    include_meta_estimators=False, type_filter='regressor')}
+    type_filter='regressor')}
 ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
-    include_meta_estimators=False, type_filter='classifier')}
+    type_filter='classifier')}
 ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
-    include_meta_estimators=False, type_filter='transformer')}
+    type_filter='transformer')}
 
 ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM = {}
 ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM = {}
@@ -45,7 +45,7 @@ for name, cls in ALL_REGRESSORS.items():
     try:
         _estimator = cls()
     except Exception as e:
-        print('{}: {}'.format(name, e))
+        pass
     else:
         if hasattr(_estimator, "n_jobs"):
             ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM[name] = cls
@@ -54,7 +54,7 @@ for name, cls in ALL_TRANSFORMERS.items():
     try:
         _estimator = cls()
     except Exception as e:
-        print('{}: {}'.format(name, e))
+        pass
     else:
         if hasattr(_estimator, "n_jobs"):
             ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM[name] = cls
@@ -63,7 +63,7 @@ for name, cls in ALL_CLASSIFIERS.items():
     try:
         _estimator = cls()
     except Exception as e:
-        print('{}: {}'.format(name, e))
+        pass
     else:
         if hasattr(_estimator, "n_jobs"):
             ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[name] = cls

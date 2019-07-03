@@ -4,7 +4,6 @@
 #
 # Author: Pierre Glaser
 import pandas as pd
-from sum_up_results import create_benchmark_dataframe
 
 N_SAMPLES = {
     'AdaBoostRegressor': 30000,              # 0
@@ -108,8 +107,3 @@ PARAMS = {
     'TheilSenRegressor': 10000,
     'TransformedTargetRegressor': 1000000
  }
-
-# benchmarks_results = create_benchmark_dataframe(
-#         group_by='class')['RegressionBench']
-benchmarks_results = pd.DataFrame()
-benchmarks_results.fillna(0, inplace=True)
