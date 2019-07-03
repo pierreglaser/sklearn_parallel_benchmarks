@@ -15,7 +15,7 @@ from benchmarks.common import ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM
 from benchmarks.common import ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM
 from benchmarks.common import fit_estimator
 from benchmarks.common import make_regression_cached
-from benchmarks.config import N_SAMPLES, benchmarks_results
+from benchmarks.config import N_SAMPLES
 
 
 class RegressionBench(SklearnBenchmark):
@@ -37,17 +37,6 @@ class RegressionBench(SklearnBenchmark):
         # considered valid for now, and we dont need to run them again, hence
         # we raise NotImplementedError, which causes the benchmark to be
         # skipped
-        try:
-            benchmark_times = benchmarks_results.xs(
-                    ['time_multiple_fit_parallelization', estimator_name,
-                     backend, pickler, str(n_jobs), n_samples, n_features],
-                    level=['name', *self.param_names])
-            avg_benchmark_time = benchmark_times.mean()
-            if avg_benchmark_time > 5:
-                raise NotImplementedError
-        except (KeyError, AttributeError):
-            pass
-
         super(RegressionBench, self).setup(pickler)
         if n_samples == 'auto':
             n_samples = N_SAMPLES[estimator_name]

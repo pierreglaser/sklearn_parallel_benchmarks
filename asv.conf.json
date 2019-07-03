@@ -83,7 +83,8 @@
 	 "pip+cloudpickle": [],
          "pytest": [],
          "pandas": [],
-         "pip+asv": []
+         "pip+asv": [],
+	 "cython": []
     },
 
     // Combinations of libraries/python versions can be excluded/included
