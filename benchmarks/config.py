@@ -10,6 +10,7 @@ N_SAMPLES = {
     'AdaBoostRegressor': 30000,              # 0
     'ARDRegression': 500,                    # 1
     'BaggingRegressor': 30000,               # 2
+    'BaggingClassifier': 100000,             # 2
     'BayesianRidge': 100000,                 # 3
     'CCA': 500000,                           # 4
     'DecisionTreeRegressor': 200000,         # 5
@@ -17,12 +18,16 @@ N_SAMPLES = {
     'ElasticNetCV': 20000,                   # 7
     'ExtraTreeRegressor': 5000000,           # 8
     'ExtraTreesRegressor': 200000,           # 9
+    'ExtraTreesClassifier': 1000000,         # 9
     'GaussianProcessRegressor': 7000,        # 10
+    'GaussianProcessClassifier': 2000,       # 10  # parallelism level: classes
     'GradientBoostingRegressor': 40000,      # 11
     'HuberRegressor': 300000,                # 12
     'KNeighborsRegressor': 2000000,          # 13
     'KernelRidge': 5000,                     # 14
     'Lars': 300000,                          # 15
+    'LabelPropagation': 8000,                # 15 # parallelism cause: knn, bottleneck: rbfkenrel
+    'LabelSpreading': 8000,                  # 15 # parallelism cause: knn, bottleneck: rbfkenrel
     'LarsCV': 300000,                        # 16
     'Lasso': 1000000,                        # 17
     'LassoCV': 300000,                       # 18
@@ -30,6 +35,8 @@ N_SAMPLES = {
     'LassoLarsCV': 500000,                   # 20
     'LassoLarsIC': 1000000,                  # 21
     'LinearRegression': 1000000,             # 22
+    'LogisticRegression': 100000,            # cython+ threading backend causing trouble
+    'LogisticRegressionCV': 10000,           # cython+ threading backend causing trouble
     'LinearSVR': 1000000,                    # 23
     'MLPRegressor': 7000,                    # 24
     'MultiTaskElasticNet': 1000000,          # 25     # multidimensional y
@@ -40,6 +47,8 @@ N_SAMPLES = {
     'OrthogonalMatchingPursuit': 2000000,    # 30
     'OrthogonalMatchingPursuitCV': 1000000,  # 31
     'PassiveAggressiveRegressor': 1000000,   # 32
+    'PassiveAggressiveClassifier': 500000,   # 32 # looks good
+    'Perceptron': 800000,                    # 32 # looks good
     'PLSCanonical': 1000000,                 # 33
     'PLSRegression': 1000000,                # 34
     'RadiusNeighborsRegressor': 1000000,     # 35
@@ -70,7 +79,7 @@ PARAMS = {
     'KNeighborsRegressor': 300000,
     'KernelRidge': 5000,
     'Lars': 300000,
-    'LarsCV': 300000,
+    'LarsCV': {'cv': 100},
     'Lasso': 1000000,
     'LassoCV': 300000,
     'LassoLars': 1000000,
