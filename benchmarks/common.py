@@ -23,8 +23,9 @@ call is run between two iterations of loop 2, in opposition with loop 5.
 """
 import timeit
 import warnings
+from abc import ABC, ABCMeta, abstractproperty
 from functools import wraps
-from joblib import Memory
+from joblib import Memory, parallel_backend, Parallel, delayed
 from sklearn.utils.testing import all_estimators
 from sklearn.datasets import make_regression
 from sklearn.base import clone
@@ -32,13 +33,14 @@ from sklearn.base import clone
 from benchmarks.profile_this import profile_this
 
 with warnings.catch_warnings():
-    warnings.simplefilter('ignore')
-    ALL_REGRESSORS = {k: v for k, v in all_estimators(
-        type_filter='regressor')}
-    ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
-        type_filter='classifier')}
-    ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
-        type_filter='transformer')}
+    warnings.simplefilter("ignore")
+    ALL_REGRESSORS = {k: v for k, v in all_estimators(type_filter="regressor")}
+    ALL_CLASSIFIERS = {
+        k: v for k, v in all_estimators(type_filter="classifier")
+    }
+    ALL_TRANSFORMERS = {
+        k: v for k, v in all_estimators(type_filter="transformer")
+    }
 
 ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM = {}
 ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM = {}
@@ -63,19 +65,24 @@ for name, cls in ALL_TRANSFORMERS.items():
         if hasattr(_estimator, "n_jobs"):
             ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM[name] = cls
 
+meta_estimators = []
 for name, cls in ALL_CLASSIFIERS.items():
     try:
         _estimator = cls()
     except Exception as e:
         pass
     else:
+        if hasattr(_estimator, "base_estimator"):
+            meta_estimators.append(name)
+            continue
         if hasattr(_estimator, "n_jobs"):
             ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[name] = cls
 
-@wraps(make_regression)
-# @memory.cache
-def make_regression_cached(*args, **kwargs):
-    return make_regression(*args, **kwargs)
+for name in meta_estimators:
+    ALL_CLASSIFIERS.pop(name)
+
+ALL_CLASSIFIERS.pop("ComplementNB")  # requires count data
+ALL_CLASSIFIERS.pop("CheckingClassifier")  # nothing done during the fit?
 
 
 def clone_and_fit(estimator, X, y):
@@ -110,7 +117,6 @@ def clone_and_fit_profiled(estimator, X, y):
     cloned_estimator.fit(X, y)
 
 
-
 class SklearnBenchmark:
     processes = 1
     number = 1
@@ -124,7 +130,92 @@ class SklearnBenchmark:
 
     def setup(self, pickler):
         from joblib.externals.loky import set_loky_pickler
+
         set_loky_pickler(pickler)
+
+
+class AbstractEstimatorBench(ABC, SklearnBenchmark):
+    __metaclass__ = ABCMeta
+    param_names = ["backend", "pickler", "n_jobs", "n_samples", "n_features"]
+    params = (
+        ["multiprocessing", "loky", "threading"][1:],
+        ["pickle", "cloudpickle"][:1],
+        [1, 2, 4][:2],
+        ["auto"],
+        ["auto"],
+    )
+
+    @abstractproperty
+    def estimator_cls(self):
+        raise NotImplementedError
+
+    @abstractproperty
+    def data_factory(self):
+        raise NotImplementedError
+
+    @abstractproperty
+    def estimator_params(self):
+        raise NotImplementedError
+
+    @abstractproperty
+    def default_n_samples(self):
+        raise NotImplementedError
+
+    @property
+    def estimator_name(self):
+        return self.estimator_cls.__name__
+
+    def setup(self, backend, pickler, n_jobs, n_samples, n_features):
+        super(AbstractEstimatorBench, self).setup(pickler)
+        if n_samples == "auto":
+            n_samples = self.default_n_samples
+
+        if n_features == "auto":
+            n_features = 10
+
+        X, y = self.data_factory(n_samples, n_features)
+
+        # warm up the executor to hide the process-creation overhead
+        with parallel_backend(backend, n_jobs):
+            Parallel()(delayed(id)(i) for i in range(10 * n_jobs))
+        self.X = X
+        self.y = y
+
+
+class SingleFitParallelizationMixin:
+    def time_single_fit_parallelization(
+        self, backend, pickler, n_jobs, n_samples, n_features
+    ):
+        estimator = self.estimator_cls(**self.estimator_params)
+
+        if "n_jobs" in estimator.get_params():
+            estimator.set_params(n_jobs=n_jobs)
+        else:
+            print(
+                "n_jobs is not an attribute of {}, not running the "
+                " benchmark".format(self.estimator_name)
+            )
+            raise NotImplemented
+
+        with parallel_backend(backend, n_jobs):
+            fit_estimator(estimator, self.X, self.y)
+
+
+class MultipleFitParallelizationMixin:
+    def time_multiple_fit_parallelization(
+        self, backend, pickler, n_jobs, n_samples, n_features
+    ):
+        estimator = self.estimator_cls(**self.estimator_params)
+
+        if "n_jobs" in estimator.get_params():
+            # avoid over subscription
+            estimator.set_params(n_jobs=1)
+
+        Parallel(backend=backend, n_jobs=n_jobs)(
+            delayed(clone_and_fit)(estimator, self.X, self.y)
+            for _ in range(self.n_tasks)
+        )
+
 
 
 class EstimatorWithLargeList:
@@ -132,6 +223,7 @@ class EstimatorWithLargeList:
 
     Instances of this class should take a long time to serizlize using
     cloudpickle, as large lists are typically very costly ot pickle"""
+
     def __init__(self):
         self.large_list = list(range(100000))
         self.best_estimator_ = self
@@ -146,7 +238,7 @@ class EstimatorWithLargeList:
         pass
 
     def predict(self, X):
-        return [0]*repeat(len(X))
+        return [0] * repeat(len(X))
 
     def score(self, *args, **kwargs):
         return 0
