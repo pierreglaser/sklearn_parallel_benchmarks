@@ -7,11 +7,45 @@ import pandas as pd
 
 N_SAMPLES = {
     'AdaBoostRegressor': 30000,              # 0
+    'AdaBoostClassifier': 300,               # 0  # NOT VERIFIED
     'ARDRegression': 500,                    # 1
     'BaggingRegressor': 3000,                # 2
-    'BaggingClassifier': 100000,             # 3
+    'BaggingClassifier': 3000,               # 3
     'BayesianRidge': 100000,                 # 4
+    'BernoulliNB': 1000,                     # 5  # NOT VERIFIED
     'CCA': 500000,                           # 5
+    'CalibratedClassifierCV': 100,           # 5  # meta estimator
+    'DummyRegressor': 1000,
+    'HistGradientBoostingRegressor': 1000,
+    'IsotonicRegression': 1000,
+    'MultiOutputRegressor': 1000,
+    'RegressorChain': 1000,
+    'VotingRegressor': 1000,
+    '_SigmoidCalibration': 1000,
+    'ComplementNB': 1000,                    # Require count data
+    'CheckingClassifier': 1000000,           # unsignificant time
+    'DecisionTreeClassifier': 40000,
+    'ExtraTreeClassifier': 1000,
+    'GaussianNB': 1000,
+    'GradientBoostingClassifier': 1000,
+    'LinearDiscriminantAnalysis': 1000,
+    'LinearSVC': 1000,
+    'MLPClassifier': 1000,
+    'MultinomialNB': 1000,
+    'NearestCentroid': 1000,
+    'NuSVC': 1000,
+    'QuadraticDiscriminantAnalysis': 1000,
+    'RidgeClassifier': 1000,
+    'RidgeClassifierCV': 1000,
+    'ClassifierChain': 1000,
+    'DummyClassifier': 1000,
+    'HistGradientBoostingClassifier': 1000,
+    'MultiOutputClassifier': 1000,
+    'OneVsOneClassifier': 1000,
+    'OneVsRestClassifier': 1000,
+    'OutputCodeClassifier': 1000,
+    'SVC': 1000,
+    'VotingClassifier': 1000,
     'DecisionTreeRegressor': 200000,         # 6
     'ElasticNet': 500000,                    # 7
     'ElasticNetCV': 20000,                   # 8
