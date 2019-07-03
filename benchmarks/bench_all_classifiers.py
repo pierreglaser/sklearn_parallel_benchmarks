@@ -83,19 +83,25 @@ class AbstractClassificationBench(ABC, SklearnBenchmark):
         with parallel_backend(backend, n_jobs):
             fit_estimator(estimator, self.X, self.y)
 
-    # def time_multiple_fit_parallelization(
-    #     self, backend, pickler, n_jobs, n_samples, n_features
-    # ):
-    #     cls = ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[self.estimator_name]
-    #     estimator = cls()
-    #     if "n_jobs" in estimator.get_params():
-    #         # avoid over subscription
-    #         estimator.set_params(n_jobs=1)
+    def time_multiple_fit_parallelization(
+        self, backend, pickler, n_jobs, n_samples, n_features
+    ):
+        cls = ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[self.estimator_name]
+        estimator = cls()
+        if "n_jobs" in estimator.get_params():
+            # avoid over subscription
+            estimator.set_params(n_jobs=1)
 
-    #     Parallel(backend=backend, n_jobs=n_jobs)(
-    #         delayed(clone_and_fit)(estimator, self.X, self.y)
-    #         for _ in range(self.n_tasks)
-    #     )
+        if "cv" in estimator.get_params():
+            estimator.set_params(cv=5)
+
+        if self.estimator_name in PARAMS:
+            estimator.set_params(**PARAMS[self.estimator_name])
+
+        Parallel(backend=backend, n_jobs=n_jobs)(
+            delayed(clone_and_fit)(estimator, self.X, self.y)
+            for _ in range(self.n_tasks)
+        )
 
 
 ALL_BENCHMARKS = {}
