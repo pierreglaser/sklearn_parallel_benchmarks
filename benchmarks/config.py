@@ -70,4 +70,12 @@ PARAMS = {
     'ExtraTreesRegressor': {'n_estimators': 100},
     'RandomForestClassifier': {'n_estimators': 20},
     'LarsCV': {'cv': 100},
+    'ElasticNetCV': {'cv': 20},
+    'LassoCV': {'cv': 20},
+    'LassoLarsCV': {'cv': 20},
+    'LogisticRegressionCV': {'cv': 20},
+    'MultiTaskElasticNetCV': {'cv': 20},
+    'MultiTaskLassoCV': {'cv': 20},
+    'OrthogonalMatchingPursuitCV': {'cv': 20},
+    'RidgeCV': {'cv': 20},
  }

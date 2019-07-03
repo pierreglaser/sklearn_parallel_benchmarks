@@ -8,7 +8,7 @@ from joblib import Parallel, delayed, parallel_backend
 from sklearn.datasets import make_classification
 
 from benchmarks.common import ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM
-from benchmarks.common import fit_estimator, SklearnBenchmark
+from benchmarks.common import fit_estimator, SklearnBenchmark, clone_and_fit
 from benchmarks.config import N_SAMPLES, PARAMS
 from abc import ABC, ABCMeta, abstractproperty
 
