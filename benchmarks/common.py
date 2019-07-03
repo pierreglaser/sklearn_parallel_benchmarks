@@ -22,6 +22,7 @@ call is run between two iterations of loop 2, in opposition with loop 5.
 
 """
 import timeit
+import warnings
 from functools import wraps
 from joblib import Memory
 from sklearn.utils.testing import all_estimators
@@ -30,13 +31,14 @@ from sklearn.base import clone
 
 from benchmarks.profile_this import profile_this
 
-# memory = Memory('/tmp/pglaser/joblib')
-ALL_REGRESSORS = {k: v for k, v in all_estimators(
-    type_filter='regressor')}
-ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
-    type_filter='classifier')}
-ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
-    type_filter='transformer')}
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    ALL_REGRESSORS = {k: v for k, v in all_estimators(
+        type_filter='regressor')}
+    ALL_CLASSIFIERS = {k: v for k, v in all_estimators(
+        type_filter='classifier')}
+    ALL_TRANSFORMERS = {k: v for k, v in all_estimators(
+        type_filter='transformer')}
 
 ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM = {}
 ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM = {}
@@ -51,6 +53,8 @@ for name, cls in ALL_REGRESSORS.items():
             ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM[name] = cls
 
 for name, cls in ALL_TRANSFORMERS.items():
+    if name == "Imputer":  # deprecated
+        continue
     try:
         _estimator = cls()
     except Exception as e:
