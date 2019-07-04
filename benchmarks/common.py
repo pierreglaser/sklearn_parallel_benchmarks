@@ -31,12 +31,6 @@ from sklearn.datasets import make_regression
 from sklearn.base import clone, MetaEstimatorMixin
 
 
-def force_cloudpickle(fn):
-    def nested_func(*args, **kwargs):
-        return fn(*args, **kwargs)
-    return nested_func
-
-
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     ALL_REGRESSORS = {
@@ -102,7 +96,6 @@ ALL_CLASSIFIERS.pop("MultinomialNB")  # requires count data
 ALL_CLASSIFIERS.pop("CheckingClassifier")  # nothing done during the fit?
 
 
-@force_cloudpickle
 def fit_estimator(estimator, X, y):
     """Fit an estimator.
 
@@ -112,7 +105,6 @@ def fit_estimator(estimator, X, y):
     estimator.fit(X, y)
 
 
-@force_cloudpickle
 def clone_and_fit(estimator, X, y):
     """clone and fit an estimator
 
