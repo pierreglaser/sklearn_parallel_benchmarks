@@ -28,18 +28,26 @@ from functools import wraps
 from joblib import Memory, parallel_backend, Parallel, delayed
 from sklearn.utils.testing import all_estimators
 from sklearn.datasets import make_regression
-from sklearn.base import clone
+from sklearn.base import clone, MetaEstimatorMixin
 
 from benchmarks.profile_this import profile_this
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    ALL_REGRESSORS = {k: v for k, v in all_estimators(type_filter="regressor")}
+    ALL_REGRESSORS = {
+        k: v
+        for k, v in all_estimators(type_filter="regressor")
+        if not k.startswith("_")
+    }
     ALL_CLASSIFIERS = {
-        k: v for k, v in all_estimators(type_filter="classifier")
+        k: v
+        for k, v in all_estimators(type_filter="classifier")
+        if not k.startswith("_")
     }
     ALL_TRANSFORMERS = {
-        k: v for k, v in all_estimators(type_filter="transformer")
+        k: v
+        for k, v in all_estimators(type_filter="transformer")
+        if not k.startswith("_")
     }
 
 ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM = {}
@@ -65,23 +73,27 @@ for name, cls in ALL_TRANSFORMERS.items():
         if hasattr(_estimator, "n_jobs"):
             ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM[name] = cls
 
-meta_estimators = []
+blacklisted_estimators = []
 for name, cls in ALL_CLASSIFIERS.items():
+    if issubclass(cls, MetaEstimatorMixin):
+        blacklisted_estimators.append(name)
+        continue
+    if 'Dummy' in cls.__name__:
+        blacklisted_estimators.append(name)
+        continue
     try:
         _estimator = cls()
     except Exception as e:
         pass
     else:
-        if hasattr(_estimator, "base_estimator"):
-            meta_estimators.append(name)
-            continue
         if hasattr(_estimator, "n_jobs"):
             ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[name] = cls
 
-for name in meta_estimators:
+for name in blacklisted_estimators:
     ALL_CLASSIFIERS.pop(name)
 
-ALL_CLASSIFIERS.pop("ComplementNB")  # requires count data
+ALL_CLASSIFIERS.pop("ComplementNB")   # requires count data
+ALL_CLASSIFIERS.pop("MultinomialNB")  # requires count data
 ALL_CLASSIFIERS.pop("CheckingClassifier")  # nothing done during the fit?
 
 
@@ -123,7 +135,7 @@ class SklearnBenchmark:
     repeat = 1
     warmup_time = 0
     timer = timeit.default_timer
-    timeout = 100
+    timeout = 10
 
     # non-asv class attributes
     n_tasks = 10
@@ -183,7 +195,7 @@ class AbstractEstimatorBench(ABC, SklearnBenchmark):
 
 
 class SingleFitParallelizationMixin:
-    def time_single_fit_parallelization(
+    def time_single_fit(
         self, backend, pickler, n_jobs, n_samples, n_features
     ):
         estimator = self.estimator_cls(**self.estimator_params)
@@ -202,7 +214,7 @@ class SingleFitParallelizationMixin:
 
 
 class MultipleFitParallelizationMixin:
-    def time_multiple_fit_parallelization(
+    def time_multiple_fit(
         self, backend, pickler, n_jobs, n_samples, n_features
     ):
         estimator = self.estimator_cls(**self.estimator_params)
@@ -215,7 +227,6 @@ class MultipleFitParallelizationMixin:
             delayed(clone_and_fit)(estimator, self.X, self.y)
             for _ in range(self.n_tasks)
         )
-
 
 
 class EstimatorWithLargeList:
