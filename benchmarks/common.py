@@ -62,7 +62,7 @@ class SklearnBenchmark:
     repeat = 1
     warmup_time = 0
     timer = timeit.default_timer
-    timeout = 10
+    timeout = 50
 
     # non-asv class attributes
     n_tasks = 4
@@ -79,7 +79,7 @@ class AbstractEstimatorBench(ABC, SklearnBenchmark):
     params = (
         ["multiprocessing", "loky", "threading"][1:],
         ["pickle", "cloudpickle"][:1],
-        [1, 2, 4][:2],
+        [1, 2, 4],
         ["auto"],
         ["auto"],
     )
