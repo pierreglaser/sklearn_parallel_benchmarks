@@ -30,7 +30,12 @@ from sklearn.utils.testing import all_estimators
 from sklearn.datasets import make_regression
 from sklearn.base import clone, MetaEstimatorMixin
 
-from benchmarks.profile_this import profile_this
+
+def force_cloudpickle(fn):
+    def nested_func(*args, **kwargs):
+        return fn(*args, **kwargs)
+    return nested_func
+
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -97,19 +102,7 @@ ALL_CLASSIFIERS.pop("MultinomialNB")  # requires count data
 ALL_CLASSIFIERS.pop("CheckingClassifier")  # nothing done during the fit?
 
 
-def clone_and_fit(estimator, X, y):
-    """clone and fit an estimator
-
-    This function is performs a fitting process after cloning the estimator
-    given as input. It can be safely called from within a Parallel loop with
-    a shared memory backend, and is common to objects that implement a fit
-    method (in opposition with cross_val_score, that requires scoring and
-    therefore that cannot be used with transformers)
-    """
-    clone_and_fit_profiled(estimator, X, y)
-
-
-@profile_this
+@force_cloudpickle
 def fit_estimator(estimator, X, y):
     """Fit an estimator.
 
@@ -119,8 +112,16 @@ def fit_estimator(estimator, X, y):
     estimator.fit(X, y)
 
 
-@profile_this
-def clone_and_fit_profiled(estimator, X, y):
+@force_cloudpickle
+def clone_and_fit(estimator, X, y):
+    """clone and fit an estimator
+
+    This function is performs a fitting process after cloning the estimator
+    given as input. It can be safely called from within a Parallel loop with
+    a shared memory backend, and is common to objects that implement a fit
+    method (in opposition with cross_val_score, that requires scoring and
+    therefore that cannot be used with transformers)
+    """
     # if we want to keep using pickle and not cloudpickle in those benchmarks,
     # we need to send pickleable fuctions. Directly decorating clone_and_fit
     # make it a nested function, thus not pickleable. Therefore, we make
@@ -138,7 +139,7 @@ class SklearnBenchmark:
     timeout = 10
 
     # non-asv class attributes
-    n_tasks = 10
+    n_tasks = 4
 
     def setup(self, pickler):
         from joblib.externals.loky import set_loky_pickler
