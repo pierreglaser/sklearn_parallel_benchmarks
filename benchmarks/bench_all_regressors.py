@@ -5,11 +5,13 @@ from sklearn.datasets import make_regression
 from joblib import Parallel, delayed, parallel_backend
 
 from benchmarks.common import (
-    ALL_REGRESSORS,
-    ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM,
     AbstractEstimatorBench,
     SingleFitParallelizationMixin,
     MultipleFitParallelizationMixin,
+)
+from benchmarks.estimators import (
+    ALL_REGRESSORS,
+    ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM,
 )
 from benchmarks.config import N_SAMPLES, PARAMS
 

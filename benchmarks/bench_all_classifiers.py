@@ -8,11 +8,13 @@ from functools import partial
 from sklearn.datasets import make_classification
 
 from benchmarks.common import (
-    ALL_CLASSIFIERS,
-    ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM,
     AbstractEstimatorBench,
     MultipleFitParallelizationMixin,
     SingleFitParallelizationMixin,
+)
+from benchmarks.estimators import (
+    ALL_CLASSIFIERS,
+    ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM
 )
 from benchmarks.config import PARAMS, N_SAMPLES
 
