@@ -6,103 +6,103 @@
 import pandas as pd
 
 N_SAMPLES = {
-    'AdaBoostRegressor': 30000,              # 0
-    'AdaBoostClassifier': 300,               # 0  # NOT VERIFIED
-    'ARDRegression': 500,                    # 1
-    'BaggingRegressor': 3000,                # 2
-    'BaggingClassifier': 3000,               # 3
-    'BayesianRidge': 100000,                 # 4
-    'BernoulliNB': 1000,                     # 5  # NOT VERIFIED
-    'CCA': 500000,                           # 5
-    'CalibratedClassifierCV': 100,           # 5  # meta estimator
-    'DummyRegressor': 1000,
-    'HistGradientBoostingRegressor': 1000,
-    'IsotonicRegression': 1000,
-    'MultiOutputRegressor': 1000,
-    'RegressorChain': 1000,
-    'VotingRegressor': 1000,
-    '_SigmoidCalibration': 1000,
-    'ComplementNB': 1000,                    # Require count data
-    'CheckingClassifier': 1000000,           # unsignificant time
-    'DecisionTreeClassifier': 40000,
-    'ExtraTreeClassifier': 1000,
-    'GaussianNB': 1000,
-    'GradientBoostingClassifier': 1000,
-    'LinearDiscriminantAnalysis': 1000,
-    'LinearSVC': 1000,
-    'MLPClassifier': 1000,
-    'MultinomialNB': 1000,
-    'NearestCentroid': 1000,
-    'NuSVC': 1000,
-    'QuadraticDiscriminantAnalysis': 1000,
-    'RidgeClassifier': 1000,
-    'RidgeClassifierCV': 1000,
-    'ClassifierChain': 1000,
-    'DummyClassifier': 1000,
-    'HistGradientBoostingClassifier': 1000,
-    'MultiOutputClassifier': 1000,
-    'OneVsOneClassifier': 1000,
-    'OneVsRestClassifier': 1000,
-    'OutputCodeClassifier': 1000,
-    'SVC': 1000,
-    'VotingClassifier': 1000,
-    'DecisionTreeRegressor': 200000,         # 6
-    'ElasticNet': 500000,                    # 7
-    'ElasticNetCV': 20000,                   # 8
-    'ExtraTreeRegressor': 5000000,           # 9
-    'ExtraTreesRegressor': 200000,           # 10
-    'ExtraTreesClassifier': 1000000,         # 11
-    'GaussianProcessRegressor': 7000,        # 12
-    'GaussianProcessClassifier': 2000,       # 13  # parallelism level: classes
-    'GradientBoostingRegressor': 40000,      # 14
-    'HuberRegressor': 300000,                # 15
-    'KNeighborsRegressor': 2000000,          # 16
-    'KNeighborsClassifier': 200,             # 17  # fit does nothing
-    'KernelRidge': 5000,                     # 18
-    'Lars': 300000,                          # 19
-    'LabelPropagation': 8000,                # 20 # parallelism cause: knn, bottleneck: rbfkenrel  # noqa
-    'LabelSpreading': 8000,                  # 21 # parallelism cause: knn, bottleneck: rbfkenrel  # noqa
-
-    'LarsCV': 300000,                        # 22
-    'Lasso': 1000000,                        # 23
-    'LassoCV': 300000,                       # 24
-    'LassoLars': 1000000,                    # 25
-    'LassoLarsCV': 500000,                   # 26
-    'LassoLarsIC': 1000000,                  # 27
-    'LinearRegression': 1000000,             # 28
-    'LogisticRegression': 100000,            # 29
-    'LogisticRegressionCV': 10000,           # 30
-    'LinearSVR': 1000000,                    # 31
-    'MLPRegressor': 7000,                    # 32
-    'MultiTaskElasticNet': 1000000,          # 33     # multidimensional y
-    'MultiTaskElasticNetCV': 1000000,        # 34     # multidimensional y
-    'MultiTaskLasso': 1000,                  # 35     # multidimensional y
-    'MultiTaskLassoCV': 1000,                # 36     # multidimensional y
-    'NuSVR': 10000,                          # 37
-    'OrthogonalMatchingPursuit': 2000000,    # 38
-    'OrthogonalMatchingPursuitCV': 1000000,  # 39
-    'PassiveAggressiveRegressor': 1000000,   # 40
-    'PassiveAggressiveClassifier': 500000,   # 41 # looks good
-    'Perceptron': 800000,                    # 42 # looks good
-    'PLSCanonical': 1000000,                 # 43
-    'PLSRegression': 1000000,                # 44
-    'RadiusNeighborsRegressor': 10000,       # 45  # fit does nothing
-    'RadiusNeighborsClassifier': 10000,      # 46  # fit does nothing
-    'RandomForestRegressor': 30000,          # 47
-    'RandomForestClassifier': 100000,        # 48
-    'RANSACRegressor': 1000000,              # 49
-    'Ridge': 1000000,                        # 50
-    'RidgeCV': 100000,                       # 51
-    'SGDRegressor': 1000000,                 # 52
-    'SGDClassifier': 500000,                 # 53
-    'SVR': 10000,                            # 54
-    'TheilSenRegressor': 10000,              # 55
-    'TransformedTargetRegressor': 1000000    # 56
+    'AdaBoostRegressor': -1,                 # meta estimator (30000)
+    'AdaBoostClassifier': -1,                # meta estimator  (300)
+    'ARDRegression': 400,                    # calibrated
+    'BaggingRegressor': -1,                  # meta estimator (3000)
+    'BaggingClassifier': -1,                 # meta estimator (3000)
+    'BayesianRidge': -1,                     # too fast
+    'BernoulliNB': -1,                       # require count data (1000)
+    'CCA': -1,                               # cryptic warning
+    'CalibratedClassifierCV': -1,            # meta estimator
+    'DummyRegressor': -1,                    # not useful
+    'HistGradientBoostingRegressor': 500000, # calibrated
+    'HistGradientBoostingClassifier': 20000, # calibrated
+    'GradientBoostingClassifier': -1,        # meta estimator
+    'IsotonicRegression': -1,                # requires 1d data
+    'MultiOutputRegressor': -1,              # meta estimator
+    'MultiOutputClassifier': -1,             # meta estimator
+    'RegressorChain': -1,                    # meta estimator
+    'RegressorChain': -1,                    # meta estimator
+    'ClassifierChain': -1,                   # meta estimator
+    'VotingRegressor': -1,                   # meta estimator
+    'VotingClassifier': -1,                  # meta estimator
+    '_SigmoidCalibration': -1,               # private estimator
+    'ComplementNB': -1,                      # require count data
+    'CheckingClassifier': -1,                # too fast
+    'DecisionTreeClassifier': 80000,         # calibrated
+    'DecisionTreeRegressor': 150000,         # calibrated
+    'ExtraTreeClassifier': 800000,           # calibrated
+    'ExtraTreeRegressor': 700000,            # calibrated
+    'ExtraTreesRegressor': -1,               # meta estimator (80000)
+    'ExtraTreesClassifier': -1,              # meta estimator (80000)
+    'GaussianNB': -1,                        # too fast
+    'LinearDiscriminantAnalysis': -1,        # need no colinear variables?
+    'QuadraticDiscriminantAnalysis': -1,     # need no colinear variables?
+    'LinearSVC': 3000,                       # calibrated
+    'LinearSVR': 1000000,                    # calibrated
+    'NuSVC': 5000,                           # calibrated
+    'NuSVR': 8000,                           # calibrated
+    'SVC': 5000,                             # calibrated
+    'SVR': 10000,                            # calibrated
+    'MLPClassifier': 30000,                  # calibrated
+    'MLPRegressor': 15000,                   # calibrated
+    'MultinomialNB': -1,                     # need count data
+    'NearestCentroid': -1,                   # too fast (100000)
+    'RidgeClassifier': -1,                   # too fast (400000)
+    'RidgeClassifierCV': -1,                 # too fast (400000)
+    'DummyClassifier': -1,                   # not useful
+    'OneVsOneClassifier': -1,                # meta estimator
+    'OneVsRestClassifier': -1,               # meta estimator
+    'OutputCodeClassifier': -1,              # meta estimator
+    'ElasticNet': -1,                        # failing for now  see #14249 (500000)
+    'ElasticNetCV': -1,                      # failing for now  see #14249 (20000)
+    'GaussianProcessRegressor': 7000,        # calibrated
+    'GaussianProcessClassifier': 1500,       # calibrated
+    'GradientBoostingRegressor': -1,         # meta estimator
+    'HuberRegressor': 300000,                # calibrated
+    'KNeighborsRegressor': -1,               # fit does nothing
+    'KNeighborsClassifier': -1,              # fit does nothing
+    'KernelRidge': 5000,                     # calibrated
+    'LabelPropagation': 8000,                # calibrated 20 # parallelism cause: knn, bottleneck: rbfkenrel  # noqa
+    'LabelSpreading': 8000,                  # calibrated 21 # parallelism cause: knn, bottleneck: rbfkenrel  # noqa
+    'Lars': -1,                              # too fast (300000)
+    'LarsCV': 150000,                        # calibrated
+    'LassoLars': 1000000,                    # calibrated
+    'LassoLarsCV': 500000,                   # calibrated
+    'LassoLarsIC': -1,                       # too fast (1000000)
+    'Lasso': -1,                             # too fast (1000000)
+    'MultiTaskLasso': -1,                    # too fast (100000)
+    'MultiTaskLassoCV': 3000,                # calibrated
+    'LassoCV': -1,                           # failing for now  see #14249
+    'LinearRegression': -1,                  # too fast (1000000)
+    'LogisticRegression': 200000,            # calibrated
+    'LogisticRegressionCV': 10000,           # calibrated
+    'MultiTaskElasticNetCV': 1000,           # failing for now  see #14249
+    'MultiTaskElasticNet': 500000,           # calibrated
+    'OrthogonalMatchingPursuit': -1,         # too fast (200000)
+    'OrthogonalMatchingPursuitCV': 300000,   # calibrated
+    'PassiveAggressiveRegressor': 1400000,   # calibrated
+    'PassiveAggressiveClassifier': 500000,   # calibrated
+    'Perceptron': 400000,                    # calibrated
+    'PLSCanonical': -1,                      # cryptic warning
+    'PLSRegression': 1000000,                # calibrated
+    'RadiusNeighborsRegressor': -1,          # fit does nothing
+    'RadiusNeighborsClassifier': -1,         # fit does nothing
+    'RandomForestRegressor': -1,             # meta estimator
+    'RandomForestClassifier': -1,            # meta estimator
+    'RANSACRegressor': -1,                   # meta estimator
+    'Ridge': -1,                             # too fast (1000000)
+    'RidgeCV': 300000,                       # calibrated
+    'SGDRegressor': 1000000,                 # calibrated
+    'SGDClassifier': 300000,                 # calibrated
+    'TheilSenRegressor': 10000,              # calibrated
+    'TransformedTargetRegressor': -1,        # too fast (1000000)
  }
 
 PARAMS = {
-    'ExtraTreesRegressor': {'n_estimators': 100},
-    'ExtraTreesClassifier': {'n_estimators': 100},
+    'ExtraTreesRegressor': {'n_estimators': 20},
+    'ExtraTreesClassifier': {'n_estimators': 20},
     'RandomForestClassifier': {'n_estimators': 20},
     'RandomForestRegressor': {'n_estimators': 20},
     'LarsCV': {'cv': 100},
@@ -113,6 +113,18 @@ PARAMS = {
     'LogisticRegression': {'solver': 'lbfgs'},
     'MultiTaskElasticNetCV': {'cv': 20},
     'MultiTaskLassoCV': {'cv': 20},
+    'GradientBoostingClassifier': {'n_estimators': 1, 'min_sample_split':20},
+    'HistGradientBoostingClassifier': {'max_iter': 30},
+    'HistGradientBoostingRegressor': {'max_iter': 30},
     'OrthogonalMatchingPursuitCV': {'cv': 20},
     'RidgeCV': {'cv': 20},
+    'LinearSVC': {'max_iter': 1000},
+    'MLPClassifier': {'hidden_layer_sizes': (10,), 'max_iter': 1000, 'learning_rate_init':0.01, 'learning_rate': 'adaptive'},
+    'MLPRegressor': {'hidden_layer_sizes': (10,), 'max_iter': 1000, 'learning_rate_init':0.01, 'learning_rate': 'adaptive'},
+    'NuSVC': {'gamma': 'auto'},
+    'SVC': {'gamma': 'auto'},
+    'NuSVR': {'gamma': 'auto'},
+    'SVR': {'gamma': 'auto'},
+    'RidgeClassifier': {'solver': 'auto'},
+    'LogisticRegression': {'multi_class': 'auto', 'solver': 'lbfgs'}
  }
