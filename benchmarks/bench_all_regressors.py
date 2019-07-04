@@ -18,14 +18,6 @@ from benchmarks.config import N_SAMPLES, PARAMS
 
 class AbstractRegressionBench(AbstractEstimatorBench):
     __metaclass__ = ABCMeta
-    param_names = ["backend", "pickler", "n_jobs", "n_samples", "n_features"]
-    params = (
-        ["multiprocessing", "loky", "threading"][1:],
-        ["pickle", "cloudpickle"][:1],
-        [1, 2, 4][:2],
-        ["auto"],
-        ["auto"],
-    )
 
     @property
     def data_factory(self):
@@ -47,15 +39,16 @@ for est_name, est_cls in ALL_REGRESSORS.items():
     multiple_fit_bench_class = type(
         bench_name,
         (AbstractRegressionBench, MultipleFitParallelizationMixin),
-        bench_attrs,
+        bench_attrs
     )
     ALL_BENCHMARKS[bench_name] = multiple_fit_bench_class
 
-    if bench_name in ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM:
+    if est_name in ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM:
         bench_name = "{}SingleFitBench".format(est_name)
         single_fit_bench_class = type(
             bench_name,
             (AbstractRegressionBench, SingleFitParallelizationMixin),
+            bench_attrs
         )
         ALL_BENCHMARKS[bench_name] = single_fit_bench_class
 

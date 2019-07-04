@@ -4,6 +4,7 @@
 # Author: Pierre Glaser
 
 from functools import partial
+from abc import ABCMeta
 
 from sklearn.datasets import make_classification
 
@@ -20,15 +21,8 @@ from benchmarks.config import PARAMS, N_SAMPLES
 
 
 class AbstractClassificationBench(AbstractEstimatorBench):
-    param_names = ["backend", "pickler", "n_jobs", "n_samples", "n_features"]
-    params = (
-        ["multiprocessing", "loky", "threading"][1:],
-        ["pickle", "cloudpickle"][:1],
-        [1, 2, 4][:2],
-        ["auto"],
-        ["auto"],
-    )
-    data_factory = partial(make_classification, n_classes=10, n_informative=5)
+    __metaclass__ = ABCMeta
+    data_factory = partial(make_classification, n_classes=10, n_informative=8)
 
 
 ALL_BENCHMARKS = {}
@@ -43,16 +37,18 @@ for est_name, est_cls in ALL_CLASSIFIERS.items():
     multiple_fit_bench_class = type(
         bench_name,
         (AbstractClassificationBench, MultipleFitParallelizationMixin),
-        bench_attrs,
+        bench_attrs
     )
     ALL_BENCHMARKS[bench_name] = multiple_fit_bench_class
 
-    if bench_name in ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM:
+    if est_name in ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM:
         bench_name = "{}SingleFitBench".format(est_name)
         single_fit_bench_class = type(
             bench_name,
             (AbstractClassificationBench, SingleFitParallelizationMixin),
+            bench_attrs
         )
         ALL_BENCHMARKS[bench_name] = single_fit_bench_class
+
 
 globals().update(ALL_BENCHMARKS)
