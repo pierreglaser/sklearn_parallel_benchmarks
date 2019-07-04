@@ -16,7 +16,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import KBinsDiscretizer, PolynomialFeatures
 from sklearn.preprocessing import StandardScaler
 
-from benchmarks.common import EstimatorWithLargeList, SklearnBenchmark
+from .estimators import EstimatorWithLargeList
+from .base import SklearnBenchmark
 
 
 class TwentyDataBench(SklearnBenchmark):

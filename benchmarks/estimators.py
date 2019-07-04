@@ -1,76 +1,33 @@
-import warnings
-from sklearn.utils.testing import all_estimators
-from sklearn.base import MetaEstimatorMixin
-from .config import N_SAMPLES
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Set of custom scikit-learn compliant estimators
+#
+# Author: Pierre Glaser
 
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    ALL_REGRESSORS = {
-        k: v
-        for k, v in all_estimators(type_filter="regressor")
-        if not k.startswith("_") and N_SAMPLES.get(k, -1) != -1
-    }
-    ALL_CLASSIFIERS = {
-        k: v
-        for k, v in all_estimators(type_filter="classifier")
-        if not k.startswith("_") and N_SAMPLES.get(k, -1) != -1
 
-    }
-    ALL_TRANSFORMERS = {
-        k: v
-        for k, v in all_estimators(type_filter="transformer")
-        if not k.startswith("_") and N_SAMPLES.get(k, -1) != -1
-    }
+class EstimatorWithLargeList:
+    """simple estimator, with a large list as an attribute
 
-ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM = {}
-ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM = {}
-ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM = {}
+    Instances of this class should take a long time to serizlize using
+    cloudpickle, as large lists are typically very costly ot pickle.
+    This estimator is used to validate that the pickling strategu during the
+    benchmarks is set as expected."""
 
-blacklisted_regressors = []
-for name, cls in ALL_REGRESSORS.items():
-    if issubclass(cls, MetaEstimatorMixin):  # should be filtered by now
-        blacklisted_regressors.append(name)
-        continue
-    if 'Dummy' in cls.__name__:              # same
-        blacklisted_regressors.append(name)
-        continue
-    try:
-        _estimator = cls()
-    except Exception as e:
+    def __init__(self):
+        self.large_list = list(range(100000))
+        self.best_estimator_ = self
+
+    def get_params(self, *args, **kwargs):
+        return dict()
+
+    def set_params(self, *args, **kwargs):
+        return self
+
+    def fit(self, *args, **kwargs):
         pass
-    else:
-        if hasattr(_estimator, "n_jobs"):
-            ALL_REGRESSORS_WITH_INTERNAL_PARALLELISM[name] = cls
 
-for name in blacklisted_regressors:
-    ALL_REGRESSORS.pop(name)
+    def predict(self, X):
+        return [0] * len(X)
 
-for name, cls in ALL_TRANSFORMERS.items():
-    if name == "Imputer":  # deprecated
-        continue
-    try:
-        _estimator = cls()
-    except Exception as e:
-        pass
-    else:
-        if hasattr(_estimator, "n_jobs"):
-            ALL_TRANSFORMERS_WITH_INTERNAL_PARALLELISM[name] = cls
-
-blacklisted_classifiers = []
-for name, cls in ALL_CLASSIFIERS.items():
-    if issubclass(cls, MetaEstimatorMixin):
-        blacklisted_classifiers.append(name)
-        continue
-    if 'Dummy' in cls.__name__:
-        blacklisted_classifiers.append(name)
-        continue
-    try:
-        _estimator = cls()
-    except Exception as e:
-        pass
-    else:
-        if hasattr(_estimator, "n_jobs"):
-            ALL_CLASSIFIERS_WITH_INTERNAL_PARALLELISM[name] = cls
-
-for name in blacklisted_classifiers:
-    ALL_CLASSIFIERS.pop(name)
+    def score(self, *args, **kwargs):
+        return 0
